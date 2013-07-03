@@ -1,6 +1,6 @@
 <h1>Blog posts</h1>
 <p class ="notice"><?php echo $this->Html->link('Adicionar Post', array('action' => 'add')); ?></p>
-<div class ="notice">
+<div class ="error-message">
 <table>
     <tr>
         <th>Id</th>
