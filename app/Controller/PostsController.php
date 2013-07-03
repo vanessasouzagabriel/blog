@@ -41,13 +41,30 @@
 
 
     	public function add() {
-        	if ($this->request->is('post')) {
-           		if ($this->Post->save($this->request->data)) {
-                	$this->Session->setFlash('Your post has been saved.');
-                	$this->redirect(array('action' => 'index'));
-            	}
-        	}
-    	}
+            if ($this->request->is('post')) {
+                $this->request->data['Post']['user_id'] = $this->Auth->user('id'); //Added this line
+                if ($this->Post->save($this->request->data)) {
+                    $this->Session->setFlash('Your post has been saved.');
+                    $this->redirect(array('action' => 'index'));
+                }
+            }
+        }
+
+        public function isAuthorized($user) {
+            if (!parent::isAuthorized($user)) {
+                if ($this->action === 'add') {
+                    // All registered users can add posts
+                    return true;
+                }
+                if (in_array($this->action, array('edit', 'delete'))) {
+                    $postId = $this->request->params['pass'][0];
+                    return $this->Post->isOwnedBy($postId, $user['id']);
+                }
+            }
+            return false;
+        }
+
 	}
+
 
 ?>
